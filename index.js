@@ -41,10 +41,10 @@ app.post('/webhook', (req, res) => {
     if (body.object === 'page') {
         body.entry.forEach((entry) => {
             let webhookEvent = entry.messaging[0];
+            console.log(JSON.stringify(webhookEvent, null, 4))
             let sender = webhookEvent.sender.id;
             let message = webhookEvent.message.text;
             
-            console.log('body', JSON.stringify(webhookEvent, null, 4))
             callSendAPI(sender, message)
         });
     } else {
