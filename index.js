@@ -31,8 +31,6 @@ app.get('/webhook', (req, res) => {
 })
 
 app.post('/webhook', (req, res) => {
-    res.sendStatus(200);
-
     if (req.body.entry[0].messaging) {
         let messageEvent = req.body.entry[0].messaging[0];
         let sender = messageEvent.sender.id;
@@ -49,7 +47,6 @@ app.post('/webhook', (req, res) => {
             handlePostback(sender, payload)
         }
     }
-
 });
 
 app.listen(PORT, () => {
@@ -105,6 +102,7 @@ function handlePostback(sender, payload) {
     if (payload == 'PL_sub_student') {
         database.students.push(sender)
     }
+    sendMessage(sender, 'You have been subscribed!');
 }
 
 function checkAttachment(sender, message) {
