@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const request = require('request');
 
 // Facebook Tokens
-const token = process.env.token;
-const vtoken = process.env.vtoken;
+const fb_token = "helloworld";
+const vtoken = "EAAD7x11SrrgBAEZBz1ZAJiLRqrLIALRZAw1OulqyxPvJQ3BnwNpbRhYxB20JMU10ySkx1wUAGJpKFM44FzWn8auhdhY84TJkdOXVTElMPFMnfGMARlaoNr3VaEAwfT7HBz446Bfca7VVDpvMZBqpItsO1B4puEmFLfu9PE1Sf0pYvctfzCUD"
+
+// Our Messagin Functions
+const sendMessage = require('./functions');
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -15,65 +17,33 @@ app.get('/', (req, res) => {
 });
 
 app.get('/webhook', (req, res) => {
-    // Parse the query params
-    let mode = req.query['hub.mode'];
-    let token = req.query['hub.verify_token'];
-    let challenge = req.query['hub.challenge'];
 
-    if (mode && token) {
-        if (mode === 'subscribe' && token === token) {
-          
-            // Responds with the challenge token from the request
-            console.log('WEBHOOK_VERIFIED');
-            res.status(200).send(challenge);
+    let mode = req.query['hub.mode'];
+    let challenge = req.query['hub.challenge'];
+    let verifytoken = req.query['hub.verify_token'];
     
-        } else {
-            res.sendStatus(403);      
-        }
+    if(verifytoken == fb_token) {
+        console.log("verified")
+        res.send(challenge)
     } else {
-        res.sendStatus(403);
+        console.log("wrong token")
+        res.sendStatus(403)
     }
 })
 
-app.post('/webhook', (req, res) => { 
-    let body = req.body;
-    console.log('Webhook post request')
-    if (body.object === 'page') {
-        body.entry.forEach((entry) => {
-            let webhookEvent = entry.messaging[0];
-            console.log(JSON.stringify(webhookEvent, null, 4))
-            let sender = webhookEvent.sender.id;
-            let message = webhookEvent.message.text;
-            
-            callSendAPI(sender, message)
-        });
-    } else {
-        res.sendStatus(404);
-    }
+app.post('/webhook', (req, res) => {
+    res.sendStatus(200);
+
+    let messageEvent = req.body.entry[0].messaging[0];
+
+    let sender = messageEvent.sender.id;
+    let recipient = messageEvent.recipient.id;
+    let message = messageEvent.message.text;
+
+    console.log('Message:', message)
+    sendMessage(sender, message);
 });
 
 app.listen(PORT, () => {
     console.log('Listening at', PORT)
 })
-
-function callSendAPI(sender_psid, response) {
-    let request_body = {
-        "recipient": {
-            "id": sender_psid
-        },
-        "message": response
-    }
-
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": vtoken },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err) {
-            console.log('message sent!')
-        } else {
-        console.error("Unable to send message:" + err);
-        }
-    }); 
-}
