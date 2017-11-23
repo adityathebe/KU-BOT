@@ -29,4 +29,14 @@ function callAPI(request_body) {
     }); 
 }
 
-module.exports = sendMessage;
+function getUserData(id, callback) {
+    let url = `https://graph.facebook.com/v2.11/${id}?access_token=${vtoken}`
+    request({url, json:true}, (error, res, body) => {
+        callback(body.first_name);
+    }) 
+}
+
+module.exports =  {
+    sendMessage,
+    getUserData
+};
