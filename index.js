@@ -3,9 +3,8 @@ const bodyParser = require('body-parser');
 
 // Facebook Tokens
 const fb_token = "helloworld";
-const vtoken = "EAAD7x11SrrgBAEZBz1ZAJiLRqrLIALRZAw1OulqyxPvJQ3BnwNpbRhYxB20JMU10ySkx1wUAGJpKFM44FzWn8auhdhY84TJkdOXVTElMPFMnfGMARlaoNr3VaEAwfT7HBz446Bfca7VVDpvMZBqpItsO1B4puEmFLfu9PE1Sf0pYvctfzCUD"
 
-// Our Messagin Functions
+// Our Messaging Functions
 const sendMessage = require('./functions');
 
 const PORT = process.env.PORT || 3000;
@@ -46,4 +45,4 @@ app.post('/webhook', (req, res) => {
 
 app.listen(PORT, () => {
     console.log('Listening at', PORT)
-})
+});

@@ -10,7 +10,7 @@ function sendMessage (receiver, msg_text) {
             text: msg_text
         } 
     }
-
+    
     callAPI(msgObj);
 }
 
