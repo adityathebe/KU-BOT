@@ -7,6 +7,10 @@ const fb_token = "helloworld";
 // Our Messaging Functions
 const {sendMessage, getUserData} = require('./functions');
 
+// Database
+const teachers = require('./teachers');
+let Records = require('./database');
+
 const PORT = process.env.PORT || 3000;
 const app = express();
 app.use(bodyParser.json());
@@ -55,45 +59,38 @@ app.listen(PORT, () => {
     console.log('Listening at', PORT)
 });
 
-let database = {
-    teachers : [
-        {
-            name: 'Aditya Thebe',
-            code: 'ATL',
-            id: 1396624087087889,
-            sub: ['COMP','PHYS','CHEM']
-        }, {
-            name: 'Jonesh Shrestha',
-            code: 'JS',
-            id: 1560680210634754,
-            sub: ['MATH','SCIENCE']
-        }
-    ],
-    students : []
-}
-
 function handleMessage(sender, message) {
     console.log('Message:', message)
 
     if (isTeacher(sender)) {
         let teacher = isTeacher(sender);
-        let msg = teacher.name + ': ' + message;
+        let msg_data = message.split(' => ');
+        let sub_code = msg_data[0];
+        let msg = msg_data[1]
+
+        // Fetch All students of given teacher of given subject
+        let database = require('./database');
+        let students = database[teacher.code][sub_code];
 
         let count = 0;
-        for (student of database.students) {
+        for (student of students) {
             sendMessage(student, msg);
             count++;
         }
         sendMessage(sender, 'your message has been sent to ' + count + ' students');
     } else {
         if (message.search('sub') == 0) {
-            let fragments = message.split(' ');
-            let teacher_code = fragments[1];
-            let sub_code = fragments[2];
-            // sub ATL MATH
 
+            try {
+                let fragments = message.split(' ');
+                let teacher_code = fragments[1];
+                let sub_code = fragments[2];
+
+                storeStudent(teacher_code, sub_code, sender);
+            } catch (err) {
+                sendMessage(sender, 'Invalid Syntax');
+            }
         }
-        sendMessage(sender, 'you are not authorized');
     }
 }
 
@@ -108,11 +105,19 @@ function isTeacher(sender) {
 
 function handlePostback(sender, payload) {
     if (payload == 'PL_sub_student') {
-        database.students.push(sender)
+        console.log('Payload Received!')
     }
-    sendMessage(sender, 'You have been subscribed!');
 }
 
 function checkAttachment(sender, message) {
 
+}
+
+function storeStudent (teacher_id, sub_code, student_id) {
+    let records = fs.readFileSync('database.json', 'utf8');
+    let data = records[teacher_id][sub_code];
+    if (data) {
+        data.push(student_id);
+        fs.writeFileSync('database.json', JSON.stringify(data, null, 4), 'utf8');
+    }
 }
