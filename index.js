@@ -31,6 +31,8 @@ app.get('/webhook', (req, res) => {
 })
 
 app.post('/webhook', (req, res) => {
+
+    res.sendStatus(200);
     if (req.body.entry[0].messaging) {
         let messageEvent = req.body.entry[0].messaging[0];
         let sender = messageEvent.sender.id;
@@ -54,17 +56,19 @@ app.listen(PORT, () => {
 });
 
 let database = {
-    teachers : [{
-        name: 'Aditya Thebe',
-        code: 'ATL',
-        id: 1396624087087889,
-        sub: ['COMP','PHYS','CHEM']
-    }, {
-        name: 'Jonesh Shrestha',
-        code: 'JS',
-        id: 1560680210634754,
-        sub: ['MATH','SCIENCE']
-    }],
+    teachers : [
+        {
+            name: 'Aditya Thebe',
+            code: 'ATL',
+            id: 1396624087087889,
+            sub: ['COMP','PHYS','CHEM']
+        }, {
+            name: 'Jonesh Shrestha',
+            code: 'JS',
+            id: 1560680210634754,
+            sub: ['MATH','SCIENCE']
+        }
+    ],
     students : []
 }
 
@@ -74,9 +78,13 @@ function handleMessage(sender, message) {
     if (isTeacher(sender)) {
         let teacher = isTeacher(sender);
         let msg = teacher.name + ': ' + message;
+
+        let count = 0;
         for (student of database.students) {
             sendMessage(student, msg);
+            count++;
         }
+        sendMessage(sender, 'your message has been sent to ' + count + ' students');
     } else {
         if (message.search('sub') == 0) {
             let fragments = message.split(' ');
