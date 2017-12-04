@@ -1,5 +1,5 @@
 const request = require('request');
-const vtoken = "EAAD7x11SrrgBAEZBz1ZAJiLRqrLIALRZAw1OulqyxPvJQ3BnwNpbRhYxB20JMU10ySkx1wUAGJpKFM44FzWn8auhdhY84TJkdOXVTElMPFMnfGMARlaoNr3VaEAwfT7HBz446Bfca7VVDpvMZBqpItsO1B4puEmFLfu9PE1Sf0pYvctfzCUD";
+const vtoken = "EAAD7x11SrrgBAA4lW3WZBzrhgJgiY8ZCye2Bc9xwVRkBtVAF5ZAk5uiFp9myWRXNxnb997HCfXJfDC3gRlQvSsk5x2ZAlSyiTy7rlPe7nyPJTqxQSemdTlZCXXaC4Nur3l03ME4vug0AOUYjZADsrAoQfozber8v3OPiqmdimRweY4y6ZB56pNZB";
 
 function sendMessage (receiver, msg_text) {
     let msgObj = {

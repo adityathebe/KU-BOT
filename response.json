@@ -1,0 +1,51 @@
+{
+    "statusCode": 400,
+    "body": {
+        "error": {
+            "message": "(#100) Message cannot be empty, must provide valid attachment or text",
+            "type": "OAuthException",
+            "code": 100,
+            "error_subcode": 2018034,
+            "fbtrace_id": "DF/jqPjnPC8"
+        }
+    },
+    "headers": {
+        "x-page-usage": "{\"call_count\":0,\"total_cputime\":0,\"total_time\":0}",
+        "access-control-allow-origin": "*",
+        "strict-transport-security": "max-age=15552000; preload",
+        "x-fb-trace-id": "DF/jqPjnPC8",
+        "x-fb-rev": "3497434",
+        "content-type": "application/json",
+        "facebook-api-version": "v2.9",
+        "cache-control": "no-store",
+        "pragma": "no-cache",
+        "expires": "Sat, 01 Jan 2000 00:00:00 GMT",
+        "www-authenticate": "OAuth \"Facebook Platform\" \"invalid_request\" \"(#100) Message cannot be empty, must provide valid attachment or text\"",
+        "vary": "Accept-Encoding",
+        "x-fb-debug": "olGXeTAY0Bf/h+rM1EkdyWCBNEYqSQtBWUIClzr+vppHGJZTF4O2P3aRWHYxKP/TFsIGH2cZUYaHzurTNkv2Ng==",
+        "date": "Mon, 04 Dec 2017 11:57:47 GMT",
+        "connection": "close"
+    },
+    "request": {
+        "uri": {
+            "protocol": "https:",
+            "slashes": true,
+            "auth": null,
+            "host": "graph.facebook.com",
+            "port": null,
+            "hostname": "graph.facebook.com",
+            "hash": null,
+            "search": "?access_token=EAAD7x11SrrgBAA4lW3WZBzrhgJgiY8ZCye2Bc9xwVRkBtVAF5ZAk5uiFp9myWRXNxnb997HCfXJfDC3gRlQvSsk5x2ZAlSyiTy7rlPe7nyPJTqxQSemdTlZCXXaC4Nur3l03ME4vug0AOUYjZADsrAoQfozber8v3OPiqmdimRweY4y6ZB56pNZB",
+            "query": "access_token=EAAD7x11SrrgBAA4lW3WZBzrhgJgiY8ZCye2Bc9xwVRkBtVAF5ZAk5uiFp9myWRXNxnb997HCfXJfDC3gRlQvSsk5x2ZAlSyiTy7rlPe7nyPJTqxQSemdTlZCXXaC4Nur3l03ME4vug0AOUYjZADsrAoQfozber8v3OPiqmdimRweY4y6ZB56pNZB",
+            "pathname": "/v2.6/me/messages",
+            "path": "/v2.6/me/messages?access_token=EAAD7x11SrrgBAA4lW3WZBzrhgJgiY8ZCye2Bc9xwVRkBtVAF5ZAk5uiFp9myWRXNxnb997HCfXJfDC3gRlQvSsk5x2ZAlSyiTy7rlPe7nyPJTqxQSemdTlZCXXaC4Nur3l03ME4vug0AOUYjZADsrAoQfozber8v3OPiqmdimRweY4y6ZB56pNZB",
+            "href": "https://graph.facebook.com/v2.6/me/messages?access_token=EAAD7x11SrrgBAA4lW3WZBzrhgJgiY8ZCye2Bc9xwVRkBtVAF5ZAk5uiFp9myWRXNxnb997HCfXJfDC3gRlQvSsk5x2ZAlSyiTy7rlPe7nyPJTqxQSemdTlZCXXaC4Nur3l03ME4vug0AOUYjZADsrAoQfozber8v3OPiqmdimRweY4y6ZB56pNZB"
+        },
+        "method": "POST",
+        "headers": {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "content-length": 324
+        }
+    }
+}

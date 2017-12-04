@@ -1,0 +1,24 @@
+{
+    "sender": {
+        "id": "1560680210634754"
+    },
+    "recipient": {
+        "id": "1997955997090908"
+    },
+    "timestamp": 1512388665765,
+    "message": {
+        "mid": "mid.$cAAdD0uiTULlmUqjppVgIWOg55ZA7",
+        "seq": 1457296,
+        "text": "hjhj",
+        "nlp": {
+            "entities": {
+                "greetings": [
+                    {
+                        "confidence": 0.56252150963886,
+                        "value": "true"
+                    }
+                ]
+            }
+        }
+    }
+}
