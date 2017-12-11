@@ -1,7 +1,9 @@
 //dependencies
 const express = require('express');
 const request = require('request');
+const fs = require ('fs');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
 // Facebook Tokens
 const botID = '1997955997090908'
@@ -9,6 +11,21 @@ const fb_token = "helloworld";
 const vtoken = "EAAD7x11SrrgBAA4lW3WZBzrhgJgiY8ZCye2Bc9xwVRkBtVAF5ZAk5uiFp9myWRXNxnb997HCfXJfDC3gRlQvSsk5x2ZAlSyiTy7rlPe7nyPJTqxQSemdTlZCXXaC4Nur3l03ME4vug0AOUYjZADsrAoQfozber8v3OPiqmdimRweY4y6ZB56pNZB";
 
 const PORT = process.env.PORT || 5000;
+let context = {};
+
+//connect to mongodb database
+mongoose.connect("mongodb://localhost/ku-bot",{useMongoClient:true});
+mongoose.Promise = global.Promise;
+let db = mongoose.connection;
+    db.on('error',(err) => {
+        console.log(err);
+    })
+    .once('open',() => {
+        console.log('connected to database');
+    })
+
+const TeacherModel = require('./models/teacher');
+const StudentModel = require('./models/student');
 
 // Initializing app express
 const app = express();
@@ -47,9 +64,9 @@ app.post('/webhook', (req, res) => {
         if (!messageEvent.delivery && sender != botID) {
 
             let message = messageEvent.message.text;
-            let reply = 'You said: ' + message;
-            console.log(sender + ' : ' + message)
-            sendMessage(sender, reply);
+            console.log('Message: ', message);
+
+            handleMessage(sender, message);
         }   
     }
     res.sendStatus(200);
@@ -60,8 +77,60 @@ app.listen(PORT, () => {
     console.log('Listening at', PORT)
 });
 
+// Function to handle message
+function handleMessage (sender, message) {
+
+    if (context.sender) {
+        subscribeStudent(sender, message)
+        sendMessage(sender, 'You have been subscribed!');
+        delete context.sender;
+    } else if (message.toLowerCase() == 'subscribe') {
+        context.sender = true;
+        sendMessage(sender, 'Enter the code');
+    } else {
+        let reply = 'echo: ' + message;
+        sendMessage(sender, reply);
+    }
+}
+
+function subscribeStudent (sender, subscription) {
+
+    let student = new StudentModel();
+    student.profileID = sender;
+    student.cr = false;
+
+    // Fetch the list of all students
+    StudentModel.find({}, (err, students) => {
+
+        let xyz = students.filter((stu) => {
+            return stu.profileID === student.profileID
+        });
+
+        if (xyz.length > 0) {
+            // Update database
+            let updatedData = {
+                "$push" : {
+                    subscribed_to: subscription
+                }
+            };
+
+            StudentModel.update({profileID: student.profileID}, updatedData, (err) => {
+                if (err) console.log(err)
+                else console.log("Student data updated!");
+            });
+        } else {
+            // save
+            student.subscribed_to = subscription;
+            student.save( (err) => {
+                if (err) console.log(err)
+                else console.log('New Student saved!');
+            });
+        }
+    });
+}
+
 // Functions to send message
-function sendMessage (receiver, msg_text) {
+function sendMessage(receiver, msg_text) {
     let msgObj = {
         recipient: {
             id: receiver
