@@ -63,33 +63,45 @@ app.post('/webhook', (req, res) => {
         // Ignore delivery reports
         if (!messageEvent.delivery && sender != botID) {
 
-            let message = messageEvent.message.text;
-            console.log('Message: ', message);
-
-            handleMessage(sender, message);
+            // Check for Postbacks
+            if ( messageEvent.postback ) {
+                let payload = messageEvent.postback.payload;
+                handlePostback(sender, payload)
+            } else if (messageEvent.message) {
+                let message = messageEvent.message.text;
+                handleMessage(sender, message);
+            }
         }   
     }
     res.sendStatus(200);
 });
 
-//listens for connections on the specified port
+// Listens for connections on the specified port
 app.listen(PORT, () => {
     console.log('Listening at', PORT)
 });
 
 // Function to handle message
 function handleMessage (sender, message) {
+    console.log('Message Received:', message);
 
     if (context.sender) {
         subscribeStudent(sender, message)
         sendMessage(sender, 'You have been subscribed!');
         delete context.sender;
-    } else if (message.toLowerCase() == 'subscribe') {
-        context.sender = true;
-        sendMessage(sender, 'Enter the code');
     } else {
         let reply = 'echo: ' + message;
         sendMessage(sender, reply);
+    }
+}
+
+// Handle Postback Messages
+function handlePostback (sender, payload) {
+    console.log("Payload Received:", payload);
+
+    if (payload == 'PAYLOAD_SUBSCRIBE') {
+        context.sender = true;
+        sendMessage(sender, 'Enter the code');
     }
 }
 
@@ -102,11 +114,11 @@ function subscribeStudent (sender, subscription) {
     // Fetch the list of all students
     StudentModel.find({}, (err, students) => {
 
-        let xyz = students.filter((stu) => {
+        let studentList = students.filter((stu) => {
             return stu.profileID === student.profileID
         });
 
-        if (xyz.length > 0) {
+        if (studentList.length > 0) {
             // Update database
             let updatedData = {
                 "$push" : {
