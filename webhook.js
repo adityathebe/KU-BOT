@@ -7,8 +7,8 @@ const mongoose = require('mongoose');
 
 // Facebook Tokens
 const botID = '1997955997090908'
-const fb_token = "helloworld";
-const vtoken = "EAAD7x11SrrgBAA4lW3WZBzrhgJgiY8ZCye2Bc9xwVRkBtVAF5ZAk5uiFp9myWRXNxnb997HCfXJfDC3gRlQvSsk5x2ZAlSyiTy7rlPe7nyPJTqxQSemdTlZCXXaC4Nur3l03ME4vug0AOUYjZADsrAoQfozber8v3OPiqmdimRweY4y6ZB56pNZB";
+const fb_token = process.env.FB_TOKEN;
+const vtoken = process.env.VTOKEN;
 
 const PORT = process.env.PORT || 5000;
 let context = {};
