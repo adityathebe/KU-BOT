@@ -14,7 +14,13 @@ const PORT = process.env.PORT || 5000;
 let context = {};
 
 //connect to mongodb database
-mongoose.connect("mongodb://localhost/ku-bot",{useMongoClient:true});
+//connect to mongodb database
+if (process.env.NODE_ENV === 'production') {
+    mongoose.connect('mongodb://admin:password@161136.mlab.com:61136/kubot', {useMongoClient: true});
+} else {
+    mongoose.connect("mongodb://localhost/ku-bot",{useMongoClient:true});  
+}
+
 mongoose.Promise = global.Promise;
 let db = mongoose.connection;
     db.on('error',(err) => {
