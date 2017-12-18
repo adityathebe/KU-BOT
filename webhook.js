@@ -14,9 +14,8 @@ const PORT = process.env.PORT || 5000;
 let context = {};
 
 //connect to mongodb database
-//connect to mongodb database
 if (process.env.NODE_ENV === 'production') {
-    mongoose.connect('mongodb://admin:password@161136.mlab.com:61136/kubot', {useMongoClient: true});
+    mongoose.connect("mongodb://admin:password@ds021016.mlab.com:21016/kubot" , {useMongoClient: true});
 } else {
     mongoose.connect("mongodb://localhost/ku-bot",{useMongoClient:true});  
 }
@@ -33,14 +32,9 @@ let db = mongoose.connection;
 const TeacherModel = require('./models/teacher');
 const StudentModel = require('./models/student');
 
-// Initializing app express
 const app = express();
-// Use Bodyparser as a middleware to parse the header as a json
 app.use(bodyParser.json());
 
-// For webhook verification Facebook will send a GET request to our webhook
-// It will contain a random challenge number and our verifiy token
-// We need to verify the 'verify token' and send back the challenge number
 app.get('/webhook', (req, res) => {
 
     let mode = req.query['hub.mode'];
@@ -56,8 +50,6 @@ app.get('/webhook', (req, res) => {
     }
 });
 
-// Facebook will send all the messages as a post request to our server at /webhook
-// All the message handelings will be done here
 app.post('/webhook', (req, res) => {
 
     if (req.body.entry[0].messaging) {
@@ -82,7 +74,6 @@ app.post('/webhook', (req, res) => {
     res.sendStatus(200);
 });
 
-// Listens for connections on the specified port
 app.listen(PORT, () => {
     console.log('Listening at', PORT)
 });
