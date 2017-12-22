@@ -5,6 +5,8 @@ const fs = require ('fs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
+const {sendMessage, getUserData} = require('./functions');
+
 // Facebook Tokens
 const botID = '1997955997090908'
 const fb_token = process.env.FB_TOKEN;
@@ -130,39 +132,13 @@ function subscribeStudent (sender, subscription) {
         } else {
             // save
             student.subscribed_to = subscription;
-            student.save( (err) => {
-                if (err) console.log(err)
-                else console.log('New Student saved!');
+            getUserData(student.profileID, (name) => {
+                student.name = name;
+                student.save( (err) => {
+                    if (err) console.log(err)
+                    else console.log('New Student saved!');
+                });
             });
         }
     });
-}
-
-// Functions to send message
-function sendMessage(receiver, msg_text) {
-    let msgObj = {
-        recipient: {
-            id: receiver
-        },
-        message : {
-            text: msg_text
-        } 
-    }
-    
-    callAPI(msgObj);
-}
-
-function callAPI(request_body) {
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": vtoken },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err && res.statusCode == 200) {
-            console.log('message sent!')
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    }); 
 }
