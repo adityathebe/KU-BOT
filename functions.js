@@ -26,7 +26,7 @@ const callSendApi = (messageData, callback) => {
         request({
             uri: 'https://graph.facebook.com/v2.6/me/messages',
             qs: { 
-                access_token: token 
+                access_token: fb_token 
             },
             method: 'POST',
             json: messageData
