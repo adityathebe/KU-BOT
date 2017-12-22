@@ -2,32 +2,44 @@ const request = require('request');
 const fb_token = process.env.FB_TOKEN;
 
 // Functions to send message
-function sendMessage(receiver, msg_text) {
-    let msgObj = {
+var sendTextMessage = function(sender, messageText) {
+    let messageData = {
         recipient: {
-            id: receiver
+            id: sender,
         },
-        message : {
-            text: msg_text
-        } 
+        message: {
+            text: messageText,
+        }
     }
-    
-    callAPI(msgObj);
+
+    return new Promise((resolve, reject) => {
+        callSendApi(messageData).then( (msg) => {
+            resolve('Successfully sent Text Message');
+        }, (errMsg) => {
+            reject(errMsg);
+        });
+    })
 }
 
-function callAPI(request_body) {
-    request({
-        "uri": "https://graph.facebook.com/v2.6/me/messages",
-        "qs": { "access_token": fb_token },
-        "method": "POST",
-        "json": request_body
-    }, (err, res, body) => {
-        if (!err && res.statusCode == 200) {
-            console.log('message sent!')
-        } else {
-            console.error("Unable to send message:" + err);
-        }
-    }); 
+const callSendApi = (messageData, callback) => {
+    return new Promise( (resolve, reject) => {
+        request({
+            uri: 'https://graph.facebook.com/v2.6/me/messages',
+            qs: { 
+                access_token: token 
+            },
+            method: 'POST',
+            json: messageData
+        }, (error, response, body)=> {
+            if (!error && response.statusCode == 200) {
+                var recipientId = body.recipient_id;
+                if (body.message_id)
+                    resolve("Message send to : " + recipientId);
+            } else {
+                reject(`Failed calling Send API ${response.statusCode} ${response.statusMessage} ${body.error}`);
+            }
+        });  
+    })
 }
 
 function getUserData(id, callback) {

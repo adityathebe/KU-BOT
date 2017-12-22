@@ -91,15 +91,17 @@ function handleMessage (sender, message) {
             delete context.sender;
         } else {
             sendMessage(sender, "Sorry we couldn't find that subject!")
-            let suggestions = suggestCode(message);
-            if (suggestions.length > 0) {
-                let reply = "Did you mean\n";
-                suggestions.forEach((sub, index) => {
-                    reply += `\n${index + 1}. ${sub.name} - ${sub.code}`;
+                .then(() => {
+                    let suggestions = suggestCode(message);
+                    if (suggestions.length > 0) {
+                        let reply = "Did you mean\n";
+                        suggestions.forEach((sub, index) => {
+                            reply += `\n${index + 1}. ${sub.name} - ${sub.code}`;
+                        })
+                        reply += "\n\n?";
+                        sendMessage(sender, reply);
+                    }                    
                 })
-                reply += "\n\n?";
-                sendMessage(sender, reply);
-            }
         }
     } else {
         let reply = 'echo: ' + message;
@@ -171,7 +173,7 @@ const subjects = [
 
 const validateCode = (msg) => {
     let found = subjects.filter((sub) => {
-        return sub.code == msg;
+        return sub.code.toLowercase() == msg.toLowercase().trim();
     })
     return found.length > 0 ? true : false;
 }
