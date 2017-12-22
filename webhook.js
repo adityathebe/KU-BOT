@@ -173,7 +173,7 @@ const subjects = [
 
 const validateCode = (msg) => {
     let found = subjects.filter((sub) => {
-        return sub.code.toLowercase() == msg.toLowercase().trim();
+        return sub.code.toLowerCase() == msg.toLowerCase().trim();
     })
     return found.length > 0 ? true : false;
 }
