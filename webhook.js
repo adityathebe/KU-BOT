@@ -9,7 +9,6 @@ const {sendMessage, getUserData} = require('./functions');
 
 // Facebook Tokens
 const botID = '1997955997090908'
-const fb_token = process.env.FB_TOKEN;
 const vtoken = process.env.VTOKEN;
 
 const PORT = process.env.PORT || 5000;
@@ -43,7 +42,7 @@ app.get('/webhook', (req, res) => {
     let challenge = req.query['hub.challenge'];
     let verifytoken = req.query['hub.verify_token'];
     
-    if(verifytoken == fb_token) {
+    if(verifytoken == vtoken) {
         console.log("verified")
         res.send(challenge)
     } else {
