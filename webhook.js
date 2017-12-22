@@ -90,11 +90,16 @@ function handleMessage (sender, message) {
             subscribeStudent(sender, message);
             delete context.sender;
         } else {
-            let suggestions = suggestCode(message).toString();
-            if (suggestions.length == 0)
-                sendMessage(sender, "Sorry couldn't find that code!")
-            else
-                sendMessage(sender, "Did you mean " + suggestions + "?");
+            sendMessage(sender, "Sorry we couldn't find that subject!")
+            let suggestions = suggestCode(message);
+            if (suggestions.length > 0) {
+                let reply = "Did you mean\n";
+                suggestions.forEach((sub, index) => {
+                    reply += `\n${index + 1}. ${sub.name} - ${sub.code}`;
+                })
+                reply += "\n\n?";
+                sendMessage(sender, reply);
+            }
         }
     } else {
         let reply = 'echo: ' + message;
