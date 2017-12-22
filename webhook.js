@@ -90,11 +90,11 @@ function handleMessage (sender, message) {
             subscribeStudent(sender, message);
             delete context.sender;
         } else {
-            let suggestions = suggestCode(message);
+            let suggestions = suggestCode(message).toString();
             if (suggestions.length == 0)
                 sendMessage(sender, "Sorry couldn't find that code!")
             else
-                sendMessage(sender, "Did you mean", suggestions.toString());
+                sendMessage(sender, "Did you mean " + suggestions + "?");
         }
     } else {
         let reply = 'echo: ' + message;
@@ -154,18 +154,14 @@ function subscribeStudent (sender, subscription) {
 }
 
 const subjects = [
-    {
-        name: "Object Oriented Programming",
-        code: "COMP 104"
-    }, 
-    {
-        name: "Advanced Calculus",
-        code: "MATH 104"
-    },
-    {
-        name: "Probability and Statistics",
-        code: "MATH 208"
-    }
+    { name: "Object Oriented Programming", code: "COMP 104" }, 
+    { name: "Advanced Calculus", code: "MATH 104" },
+    { name: "Probability and Statistics", code: "MATH 208" },
+    { name: "Communication Skills I", code: "ENGT 101" },
+    { name: "Communication Skills II", code: "ENGT 102" },
+    { name: "Discrete Mathematics", code: "MCSC 201" },
+    { name: "Numerical Methods", code: "MCSC 202" },
+    { name: "Data Structures and Algorithms", code: "COMP 202" }
 ]
 
 const validateCode = (msg) => {
