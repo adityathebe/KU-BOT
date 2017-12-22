@@ -131,7 +131,7 @@ function subscribeStudent (sender, subscription) {
         } else {
             // save
             student.subscribed_to = subscription;
-            getUserData(student.profileID, (name) => {
+            getUserData(sender, (name) => {
                 student.name = name;
                 student.save( (err) => {
                     if (err) console.log(err)

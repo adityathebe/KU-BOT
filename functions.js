@@ -31,7 +31,7 @@ function callAPI(request_body) {
 }
 
 function getUserData(id, callback) {
-    let url = `https://graph.facebook.com/v2.11/${id}?access_token=${vtoken}`
+    let url = `https://graph.facebook.com/v2.11/${id}?access_token=${fb_token}`
     request({url, json:true}, (error, res, body) => {
         callback(body.first_name);
     }) 
