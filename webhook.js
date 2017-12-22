@@ -4,6 +4,7 @@ const request = require('request');
 const fs = require ('fs');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const stringSimilarity = require('string-similarity');
 
 const {sendMessage, getUserData} = require('./functions');
 
@@ -84,9 +85,17 @@ function handleMessage (sender, message) {
     console.log('Message Received:', message);
 
     if (context.sender) {
-        subscribeStudent(sender, message)
-        sendMessage(sender, 'You have been subscribed!');
-        delete context.sender;
+        // Check if the code is valid
+        if (validateCode(message)) {
+            subscribeStudent(sender, message);
+            delete context.sender;
+        } else {
+            let suggestions = suggestCode(message);
+            if (suggestions.length == 0)
+                sendMessage(sender, "Sorry couldn't find that code!")
+            else
+                sendMessage(sender, "Did you mean", suggestions.toString());
+        }
     } else {
         let reply = 'echo: ' + message;
         sendMessage(sender, reply);
@@ -139,5 +148,36 @@ function subscribeStudent (sender, subscription) {
                 });
             });
         }
+
+        sendMessage(sender, 'You have been subscribed!');
     });
+}
+
+const subjects = [
+    {
+        name: "Object Oriented Programming",
+        code: "COMP 104"
+    }, 
+    {
+        name: "Advanced Calculus",
+        code: "MATH 104"
+    },
+    {
+        name: "Probability and Statistics",
+        code: "MATH 208"
+    }
+]
+
+const validateCode = (msg) => {
+    let found = subjects.filter((sub) => {
+        return sub.code == msg;
+    })
+    return found.length > 0 ? true : false;
+}
+
+const suggestCode = (msg) => {
+    let matchedCode = subjects.filter((sub) => {
+        return stringSimilarity.compareTwoStrings(sub.code, msg) > 0.6;
+    })
+    return matchedCode;
 }
