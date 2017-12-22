@@ -2,7 +2,7 @@ const request = require('request');
 const fb_token = process.env.FB_TOKEN;
 
 // Functions to send message
-var sendTextMessage = function(sender, messageText) {
+var sendMessage = function(sender, messageText) {
     let messageData = {
         recipient: {
             id: sender,
