@@ -21,6 +21,25 @@ var sendMessage = function(sender, messageText) {
     })
 }
 
+const sendQuickReplies = (sender, data) => {
+    let messageData =   {
+        recipient: {
+            id: sender
+        },
+        message : {
+            text: data.text,
+            "quick_replies": data.element,
+        }
+    }
+    return new Promise((resolve, reject) => {
+        callSendApi(messageData).then( (msg) => {
+            resolve(msg);
+        }, (errMsg) => {
+            reject(errMsg);
+        });
+    })
+}
+
 const callSendApi = (messageData, callback) => {
     return new Promise( (resolve, reject) => {
         request({
