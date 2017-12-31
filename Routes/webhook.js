@@ -9,6 +9,7 @@ const botID = '1997955997090908'
 const {sendMessage, getUserData} = require('../Modules/apicalls');
 
 // Utility Functions
+const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
 
 // Utility Variables
 let SUB_CONTEXT = {};
@@ -59,7 +60,6 @@ router.post('/', (req, res) => {
     res.sendStatus(200);
 });
 
-// Handle Postback Messages
 function handlePostback (sender, payload) {
     console.log("Payload Received:", payload);
 
@@ -77,7 +77,6 @@ function handlePostback (sender, payload) {
     }
 }
 
-// Function to handle message
 function handleMessage (sender, message) {
     console.log('Message Received:', message);
 
@@ -92,26 +91,24 @@ function handleMessage (sender, message) {
 
 function handle_subscription (sender, message) {
     if (validateCode(message)) {
-        subscribeStudent(sender, message);
-        delete SUB_CONTEXT.sender;
+        subscribeStudent(sender, message)
+            .then((msg) => {
+                sendMessage(sender, msg)
+                delete SUB_CONTEXT.sender;
+            })
+            .catch((err) => sendMessage(sender, err));
+
     } else {
-        sendMessage(sender, "Sorry we couldn't find that subject!")
-            .then(() => {
-                let suggestions = suggestCode(message);
-                if (suggestions.length > 0) {
-                    let reply = "Did you mean\n";
-                    suggestions.forEach((sub, index) => {
-                        reply += `\n${index + 1}. ${sub.name} - ${sub.code}`;
-                    })
-                    reply += "\n\n?";
-                    sendMessage(sender, reply);
-                }                    
-            });
+        sendMessage(sender, "Invalid Subscription Request!")
     }
 }
 
 function handle_notification (sender, message) {
 
+}
+
+function validateCode (message) {
+    return true;
 }
 
 module.exports = router
