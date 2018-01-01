@@ -6,7 +6,7 @@ const vtoken = process.env.VTOKEN;
 const botID = '1997955997090908'
 
 // Graph API Functions
-const {sendMessage, getUserData} = require('../Modules/apicalls');
+const {sendMessage, sendQuickReplies, getUserData} = require('../Modules/apicalls');
 
 // Utility Functions
 const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
@@ -82,8 +82,20 @@ function handlePostback (sender, payload) {
                 get_classes_of_teacher(sender)
                     .then((classes) => {
                         NOTIFY_CONTEXT.sender = true;
+                        let data = {}
+                        data.text = "Choose your subject";
+                        data.elements = [];
 
-                        // send buttons for all classes
+                        classes.forEach((classs) => {
+                            let temp_data = {
+                                content_type: text,
+                                title: classs,
+                                payload: classs
+                            }
+                            data.element.push(temp_data);
+                        });
+
+                        sendQuickReplies(sender, data);
                     })
                     .catch((err) => {
                         console.log(err);
@@ -114,6 +126,10 @@ function handleMessage (sender, message) {
     }
 
     else {
+        if (message == 'registermeplease') {
+            REGISTER_CONTEXT.sender = true;
+            sendMessage(sender, 'Enter the code');
+        }
         sendMessage(sender, 'Sorry I did not understand that.');
     }
 }
