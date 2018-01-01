@@ -144,6 +144,14 @@ function handleMessage (sender, message) {
     }
 }
 
+function handle_quickReplies (sender, payload) {
+    console.log("Quick Reply Payload Received:", payload);
+
+    NOTIFY_CLASS_CONTEXT.sender = payload;
+    sendMessage(sender, 'Enter your message');
+}
+
+
 function handle_registeration (sender, message) {
     if (message == 'guitar') {
         // register Teacher
@@ -158,12 +166,6 @@ function handle_registeration (sender, message) {
     } else {
         sendMessage(sender, 'Wrong Code');
     }
-}
-
-function handle_quickReplies (sender, payload) {
-    NOTIFY_CLASS_CONTEXT.sender = payload;
-    sendMessage(sender, 'Enter your message');
-
 }
 
 function handle_subscription (sender, message) {
