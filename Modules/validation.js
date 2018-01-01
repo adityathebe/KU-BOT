@@ -68,7 +68,8 @@ function get_students_of_class (class_code) {
 function get_classes_of_teacher (teacher_id) {
 	return new Promise((resolve, reject) => {
 		TeacherModel.findOne({profileID: teacher_id}, (err, teacher) => {
-			if (err)
+			if (err) reject(err);
+			
 			if (teacher)
 				resolve(teacher.classes)
 			else
