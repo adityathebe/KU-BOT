@@ -54,6 +54,7 @@ function registerTeacher (profile_id ) {
 
         let teacher = new TeacherModel();
         teacher.profileID = profile_id;
+        // teacher.classes = ['MATH', 'CHEM', 'PHY'];
 
         // Fetch the list of all students
         TeacherModel.findOne({profileID: profile_id}, (err, teachers) => {
