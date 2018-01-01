@@ -54,7 +54,14 @@ router.post('/', (req, res) => {
             if ( messageEvent.postback ) {
                 let payload = messageEvent.postback.payload;
                 handlePostback(sender, payload)
-            } else if (messageEvent.message) {
+            } 
+
+            else if (messageEvent.message.quick_replies) {
+                let payload = messageEvent.message.quick_reply.payload;
+                handle_quickReplies(sender, payload);
+            }
+
+            else if (messageEvent.message) {
                 let message = messageEvent.message.text;
                 handleMessage(sender, message);
             }
@@ -119,7 +126,7 @@ function handleMessage (sender, message) {
         handle_subscription(sender, message)
     } 
 
-    else if (NOTIFY_CLASS_CONTEXT.sender) {
+    else if (NOTIFY_CONTEXT.sender) {
         class_code = NOTIFY_CLASS_CONTEXT.sender;
         handle_notification(sender, message, class_code);
     } 
