@@ -140,6 +140,7 @@ function handle_registeration (sender, message) {
         registerTeacher(sender)
             .then((msg) => {
                 sendMessage(sender, "You have been registered as teacher!");
+                delete REGISTER_CONTEXT.sender;
             })  
             .catch((err) => {
                 sendMessage(sender, err)
