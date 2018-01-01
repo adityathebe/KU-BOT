@@ -91,7 +91,7 @@ function handlePostback (sender, payload) {
 
                         classes.forEach((classs) => {
                             let temp_data = {
-                                content_type: text,
+                                content_type: "text",
                                 title: classs,
                                 payload: classs
                             }
