@@ -126,7 +126,7 @@ function handleMessage (sender, message) {
         handle_subscription(sender, message)
     } 
 
-    else if (NOTIFY_CONTEXT.sender) {
+    else if (NOTIFY_CLASS_CONTEXT.sender) {
         class_code = NOTIFY_CLASS_CONTEXT.sender;
         handle_notification(sender, message, class_code);
     } 
