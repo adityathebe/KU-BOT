@@ -82,12 +82,10 @@ function handlePostback (sender, payload) {
                 get_classes_of_teacher(sender)
                     .then((classes) => {
 
-                        console.log(classes.length, ' classes found!');
-
                         NOTIFY_CONTEXT.sender = true;
                         let data = {}
                         data.text = "Choose your subject";
-                        data.elements = [];
+                        data.element = [];
 
                         classes.forEach((classs) => {
                             let temp_data = {
