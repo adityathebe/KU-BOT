@@ -70,5 +70,6 @@ function getUserData(id, callback) {
 
 module.exports =  {
     sendMessage,
+    sendQuickReplies,
     getUserData
 };
