@@ -1,7 +1,6 @@
 // Database Models
 const TeacherModel = require('../models/teacher');
 const StudentModel = require('../models/student');
-const ClassModel = require('../models/classroom');
 
 function validate_teacher (profile_id) {
 

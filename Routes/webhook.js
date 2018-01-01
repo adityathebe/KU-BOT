@@ -22,7 +22,6 @@ let NOTIFY_CLASS_CONTEXT = {};
 // Database Models
 const TeacherModel = require('../models/teacher');
 const StudentModel = require('../models/student');
-const ClassModel = require('../models/classroom');
 
 let router = express.Router();
 
