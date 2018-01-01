@@ -1,7 +1,6 @@
 // Database Models
 const TeacherModel = require('../models/teacher');
 const StudentModel = require('../models/student');
-const ClassModel = require('../models/classroom');
 
 function subscribeStudent (sender, subscription_code) {
 
@@ -54,28 +53,28 @@ function registerTeacher (profile_id ) {
         teacher.profileID = profile_id;
 
         // Fetch the list of all students
-        TeacherModel.find({}, (err, teachers) => {
+        TeacherModel.findOne({profileID: profile_id}, (err, teachers) => {
 
-            if (err) reject("Database Error" + err)
+            if (err) reject("Sorry try again. Database error")
 
-            let teacherList = teachers.filter((t) => {
-                return teacher.profileID === t.profileID
-            });
-
-            if (teacherList.length > 0) {
+            if (teachers) {
                 reject('Teacher already registered');
             } else {
                 // save
                 getUserData(profile_id, (name) => {
                     teacher.name = name;
                     teacher.save( (err) => {
-                        if (err) rejectc(err)
+                        if (err) reject(err)
                         else resolve('New Teacher Registered!');
                     });
                 });
             }
         });
     })   
+}
+
+function add_class_of_teacher (teacher_id, class_code) {
+    
 }
 
 module.exports = {

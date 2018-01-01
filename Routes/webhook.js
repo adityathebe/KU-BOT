@@ -10,10 +10,14 @@ const {sendMessage, getUserData} = require('../Modules/apicalls');
 
 // Utility Functions
 const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
+const { validate_teacher, validate_class } = require('../Modules/validation');
+const { get_students_of_class, get_classes_of_teacher } = require('../Modules/validation');
 
 // Utility Variables
 let SUB_CONTEXT = {};
 let NOTIFY_CONTEXT = {};
+let REGISTER_CONTEXT = {};
+let NOTIFY_CLASS_CONTEXT = {};
 
 // Database Models
 const TeacherModel = require('../models/teacher');
@@ -66,14 +70,31 @@ function handlePostback (sender, payload) {
     if (payload == 'PAYLOAD_SUBSCRIBE') {
         SUB_CONTEXT.sender = true;
         sendMessage(sender, 'Enter the code');
-    } else if ( payload == 'PAYLOAD_NOTIFY') {
-        // Check if user is authorized to send notifications
-        if (isTeacher(sender)) {
-            NOTIFY_CONTEXT.sender = true;
-            sendMessage(sender, 'Enter the code');
-        } else {
-            sendMessage(sender, "You're not authorized to send notifications")
-        }
+    }
+
+    if ( payload == 'PAYLOAD_REGISTER') {
+        REGISTER_CONTEXT.sender = true;
+        sendMessage(sender, 'Enter the code');
+    }
+
+    if ( payload == 'PAYLOAD_NOTIFY') {
+        validate_teacher(sender)
+            .then((teachers) => {
+                get_classes_of_teacher(sender)
+                    .then((classes) => {
+                        NOTIFY_CONTEXT.sender = true;
+
+                        // send buttons for all classes
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    })
+
+            })
+            .catch((err) => {
+                console.log(err);
+                sendMessage(sender, "You're not authorized to send notifications")
+            });
     }
 }
 
@@ -82,29 +103,70 @@ function handleMessage (sender, message) {
 
     if (SUB_CONTEXT.sender) {
         handle_subscription(sender, message)
-    } else if (NOTIFY_CONTEXT.sender) {
-        handle_notification(sender, message)
-    } else {
+    } 
+
+    else if (NOTIFY_CLASS_CONTEXT.sender) {
+        class_code = NOTIFY_CLASS_CONTEXT.sender;
+        handle_notification(sender, message, class_code);
+    } 
+
+    else if (REGISTER_CONTEXT.sender) {
+        handle_registeration(sender, message);
+    }
+
+    else {
         sendMessage(sender, 'Sorry I did not understand that.');
     }
 }
 
-function handle_subscription (sender, message) {
-    if (validateCode(message)) {
-        subscribeStudent(sender, message)
+function handle_registeration (sender, message) {
+    if (message == 'guitar') {
+        // register Teacher
+        registerTeacher(sender)
             .then((msg) => {
-                sendMessage(sender, msg)
-                delete SUB_CONTEXT.sender;
+                sendMessage(sender, "You have been registered as teacher!");
+            })  
+            .catch((err) => {
+                sendMessage(sender, err)
             })
-            .catch((err) => sendMessage(sender, err));
-
     } else {
-        sendMessage(sender, "Invalid Subscription Request!")
+        sendMessage(sender, 'Wrong Code');
     }
 }
 
-function handle_notification (sender, message) {
+function handle_quickReplies (sender, payload) {
+    NOTIFY_CLASS_CONTEXT.sender = payload;
+    sendMessage(sender, 'Enter your message');
 
+}
+
+function handle_subscription (sender, message) {
+    validate_class(message)
+        .then((msg) => {
+            subscribeStudent(sender, message)
+                .then((msg) => {
+                    sendMessage(sender, msg)
+                    delete SUB_CONTEXT.sender;
+                })
+                .catch((err) => sendMessage(sender, err));
+
+        })
+        .catch((err) => {
+            sendMessage(sender, 'Invalid class code...');
+        });
+}
+
+function handle_notification (sender, message, class_code) {
+    get_students_of_class(class_code)
+        .then((students) => {
+            students.forEach((student) => {
+                sendMessage(student.profilID, message);
+            })
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+    
 }
 
 function validateCode (message) {
