@@ -155,19 +155,18 @@ function handle_quickReplies (sender, payload) {
 async function handle_registeration (sender, message) {
     if (message == 'guitar') {
         // register Teacher
-        registerTeacher(sender)
-            .then((msg) => {
-                await sendMessage(sender, "You have been registered as a teacher!");
-                let welcome_msg_teacher = "You can now add new classes by typing /ADD_CLASS command.\n"
+        try {
+            await registerTeacher(sender)
+            await sendMessage(sender, "You have been registered as a teacher!");
+            let welcome_msg_teacher = "You can now add new classes by typing /ADD_CLASS command.\n"
                 welcome_msg_teacher += "To send notices to classes you can use the menu on the left side.\n\n"
                 welcome_msg_teacher += "You can always get commands by typing /HELP command.\n"
                 welcome_msg_teacher += "Thank you"
-                await sendMessage(sender, welcome_msg_teacher);
-                delete REGISTER_CONTEXT.sender;
-            })  
-            .catch((err) => {
-                sendMessage(sender, err)
-            })
+            await sendMessage(sender, welcome_msg_teacher);
+            delete REGISTER_CONTEXT.sender;
+        } catch(error) {
+            sendMessage(sender, error)
+        }
     } else {
         sendMessage(sender, 'Wrong Code');
     }
