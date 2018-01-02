@@ -91,7 +91,7 @@ function handlePostback (sender, payload) {
 
                         NOTIFY_CONTEXT.sender = true;
                         let data = {}
-                        data.text = "Choose your subject";
+                        data.text = "Choose your class";
                         data.element = [];
 
                         classes.forEach((classs) => {
@@ -103,9 +103,13 @@ function handlePostback (sender, payload) {
                             data.element.push(temp_data);
                         });
 
-                        sendQuickReplies(sender, data)
-                            .then((msg) => console.log(msg))
-                            .catch((err) => console.log(err));
+                        if (data.element.length > 0) {
+                            sendQuickReplies(sender, data)
+                                .then((msg) => console.log(msg))
+                                .catch((err) => console.log(err));
+                        } else {
+                            sendMessage(sender, "Sorry you haven't registered any classes")  
+                        }
                     })
                     .catch((err) => {
                         console.log(err);
@@ -136,10 +140,6 @@ function handleMessage (sender, message) {
     }
 
     else {
-        if (message == 'registermeplease') {
-            REGISTER_CONTEXT.sender = true;
-            sendMessage(sender, 'Enter the code');
-        }
         sendMessage(sender, 'Sorry I did not understand that.');
     }
 }
@@ -152,13 +152,17 @@ function handle_quickReplies (sender, payload) {
     delete NOTIFY_CONTEXT.sender;
 }
 
-
-function handle_registeration (sender, message) {
+async function handle_registeration (sender, message) {
     if (message == 'guitar') {
         // register Teacher
         registerTeacher(sender)
             .then((msg) => {
-                sendMessage(sender, "You have been registered as teacher!");
+                await sendMessage(sender, "You have been registered as a teacher!");
+                let welcome_msg_teacher = "You can now add new classes by typing /ADD_CLASS command.\n"
+                welcome_msg_teacher += "To send notices to classes you can use the menu on the left side.\n\n"
+                welcome_msg_teacher += "You can always get commands by typing /HELP command.\n"
+                welcome_msg_teacher += "Thank you"
+                await sendMessage(sender, welcome_msg_teacher);
                 delete REGISTER_CONTEXT.sender;
             })  
             .catch((err) => {
