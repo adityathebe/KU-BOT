@@ -47,6 +47,8 @@ router.post('/', (req, res) => {
         let sender = messageEvent.sender.id;
         let recipient = messageEvent.recipient.id;
 
+        console.log(JSON.stringify(messageEvent, null, 4))
+
         // Ignore delivery reports
         if (!messageEvent.delivery && sender != botID) {
 
@@ -149,6 +151,7 @@ function handle_quickReplies (sender, payload) {
 
     NOTIFY_CLASS_CONTEXT.sender = payload;
     sendMessage(sender, 'Enter your message');
+    delete NOTIFY_CONTEXT.sender;
 }
 
 
