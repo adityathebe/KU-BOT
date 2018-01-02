@@ -64,8 +64,9 @@ const callSendApi = (messageData, callback) => {
 function getUserData(id, callback) {
     let url = `https://graph.facebook.com/v2.11/${id}?access_token=${fb_token}`
     request({url, json:true}, (error, res, body) => {
-        callback(body.first_name);
-    }) 
+        let name = `${body.first_name} ${body.last_name}`
+        callback(name);
+    });
 }
 
 module.exports =  {

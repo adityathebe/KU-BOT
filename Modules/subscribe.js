@@ -3,7 +3,7 @@ const TeacherModel = require('../models/teacher');
 const StudentModel = require('../models/student');
 
 const { getUserData } = require('../Modules/apicalls');
-
+const { validate_class } = require('../Modules/validation');
 
 function subscribeStudent (sender, subscription_code) {
 
@@ -77,11 +77,31 @@ function registerTeacher (profile_id ) {
     })   
 }
 
-function add_class_of_teacher (teacher_id, class_code) {
-    
+function register_class (teacher_id, class_code) {
+
+    return new Promise((resolve, reject) => {
+
+        validate_class(class_code).then((msg) => {
+            reject('Class code already taken!');
+        })
+        .catch((err) => {
+            
+            let updatedData = {
+                "$push" : {
+                    classes: class_code
+                }
+            };
+
+            TeacherModel.update({profileID: teacher_id}, updatedData, (err) => {
+                if (err) reject(err)
+                else resolve("New class added!");
+            });
+        });
+    })
 }
 
 module.exports = {
     subscribeStudent,
-    registerTeacher
+    registerTeacher,
+    register_class
 }

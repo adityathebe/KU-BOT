@@ -10,6 +10,7 @@ const {sendMessage, sendQuickReplies, getUserData} = require('../Modules/apicall
 
 // Utility Functions
 const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
+const { register_class } = require('../Modules/subscribe');
 const { validate_teacher, validate_class } = require('../Modules/validation');
 const { get_students_of_class, get_classes_of_teacher } = require('../Modules/validation');
 
@@ -18,6 +19,7 @@ let SUB_CONTEXT = {};
 let NOTIFY_CONTEXT = {};
 let REGISTER_CONTEXT = {};
 let NOTIFY_CLASS_CONTEXT = {};
+let CLASS_ADDITION_CONTEXT = {};
 
 // Database Models
 const TeacherModel = require('../models/teacher');
@@ -139,6 +141,33 @@ function handleMessage (sender, message) {
         handle_registeration(sender, message);
     }
 
+    else if (CLASS_ADDITION_CONTEXT.sender) {
+        register_class(sender, message)
+            .then((msg) => {
+                sendMessage(sender, msg);
+                delete CLASS_ADDITION_CONTEXT.sender;
+            })
+            .catch((err) => {
+                sendMessage(sender, err);
+            })
+    }
+
+    else if (message.toUpperCase().trim() == 'HELP') {
+
+        let quick_replies_data = {
+            text: "Choose the command"
+            element :[{
+                content_type: "text",
+                title: 'Add Class',
+                payload: 'PAYLOAD_ADD_CLASS'
+            }]
+        }
+
+        sendQuickReplies(sender, quick_replies_data)
+            .then((msg) => console.log(msg))
+            .catch((err) => console.log(err));
+    }
+
     else {
         sendMessage(sender, 'Sorry I did not understand that.');
     }
@@ -147,20 +176,26 @@ function handleMessage (sender, message) {
 function handle_quickReplies (sender, payload) {
     console.log("Quick Reply Payload Received:", payload);
 
-    NOTIFY_CLASS_CONTEXT.sender = payload;
-    sendMessage(sender, 'Enter your message');
-    delete NOTIFY_CONTEXT.sender;
+    if (payload == 'PAYLOAD_ADD_CLASS') {
+        sendMessage(sender, 'Enter new class code');
+        CLASS_ADDITION_CONTEXT.sender = true;
+    }
+
+    else {   
+        NOTIFY_CLASS_CONTEXT.sender = payload;
+        sendMessage(sender, 'Enter your message');
+        delete NOTIFY_CONTEXT.sender;
+    }
 }
 
 async function handle_registeration (sender, message) {
-    if (message == 'guitar') {
+    if (message.toLowerCase().trim() == 'kuteachers') {
         // register Teacher
         try {
             await registerTeacher(sender)
             await sendMessage(sender, "You have been registered as a teacher!");
-            let welcome_msg_teacher = "You can now add new classes by typing /ADD_CLASS command.\n"
+            let welcome_msg_teacher = "You can now add new classes by HELP command.\n"
                 welcome_msg_teacher += "To send notices to classes you can use the menu on the left side.\n\n"
-                welcome_msg_teacher += "You can always get commands by typing /HELP command.\n"
                 welcome_msg_teacher += "Thank you"
             await sendMessage(sender, welcome_msg_teacher);
             delete REGISTER_CONTEXT.sender;
