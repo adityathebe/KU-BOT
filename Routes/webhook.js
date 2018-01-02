@@ -189,7 +189,7 @@ function handle_notification (sender, message, class_code) {
     get_students_of_class(class_code)
         .then((students) => {
             students.forEach((student) => {
-                sendMessage(student.profilID, message);
+                sendMessage(student.profileID, message);
             })
         })
         .catch((err) => {
