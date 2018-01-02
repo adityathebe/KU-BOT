@@ -155,7 +155,7 @@ function handleMessage (sender, message) {
     else if (message.toUpperCase().trim() == 'HELP') {
 
         let quick_replies_data = {
-            text: "Choose the command"
+            text: "Choose the command",
             element :[{
                 content_type: "text",
                 title: 'Add Class',
