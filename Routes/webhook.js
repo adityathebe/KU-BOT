@@ -47,8 +47,6 @@ router.post('/', (req, res) => {
         let sender = messageEvent.sender.id;
         let recipient = messageEvent.recipient.id;
 
-        console.log(JSON.stringify(messageEvent, null, 4))
-
         // Ignore delivery reports
         if (!messageEvent.delivery && sender != botID) {
 
@@ -58,7 +56,7 @@ router.post('/', (req, res) => {
                 handlePostback(sender, payload)
             } 
 
-            else if (messageEvent.message.quick_replies) {
+            else if (messageEvent.message.quick_reply) {
                 let payload = messageEvent.message.quick_reply.payload;
                 handle_quickReplies(sender, payload);
             }
