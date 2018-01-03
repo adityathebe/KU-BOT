@@ -47,15 +47,19 @@ function validate_CR (profile_id) {
 
 async function validate_teacher_CR (profile_id) {
 	return new Promise((resolve, reject) => {
-		let isTeacher = await validate_teacher(profile_id)
-		let isCR = await validate_CR(profile_id)
+		validate_teacher(profile_id)
+			.then((isTeacher) => {
+				validate_CR(profile_id)
+					.then((isCR) => {
+						if (isTeacher)
+							resolve('teacher')
+						else if (isCR)
+							resolve('cr')
+						else
+							resolve(false)
 
-		if (isTeacher)
-			resolve('teacher')
-		else if (isCR)
-			resolve('cr')
-		else
-			resolve(false)
+					})
+			})
 	})
 }
 
