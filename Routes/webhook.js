@@ -11,7 +11,7 @@ const {sendMessage, sendQuickReplies, getUserData} = require('../Modules/apicall
 // Utility Functions
 const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
 const { register_class } = require('../Modules/subscribe');
-const { validate_teacher, validate_class } = require('../Modules/validation');
+const { validate_teacher, validate_class, validate_teacher_CR } = require('../Modules/validation');
 const { get_students_of_class, get_classes_of_teacher } = require('../Modules/validation');
 
 // Utility Variables
@@ -86,37 +86,42 @@ function handlePostback (sender, payload) {
     }
 
     if ( payload == 'PAYLOAD_NOTIFY') {
-        validate_teacher(sender)
-            .then((teachers) => {
-                get_classes_of_teacher(sender)
-                    .then((classes) => {
+        validate_teacher_CR(sender)
+            .then((person) => {
 
-                        NOTIFY_CONTEXT.sender = true;
-                        let data = {}
-                        data.text = "Choose your class";
-                        data.element = [];
+                if (person == 'Teacher') {
+                    get_classes_of_teacher(sender)
+                        .then((classes) => {
 
-                        classes.forEach((classs) => {
-                            let temp_data = {
-                                content_type: "text",
-                                title: classs,
-                                payload: classs
+                            NOTIFY_CONTEXT.sender = true;
+                            let data = {}
+                            data.text = "Choose your class";
+                            data.element = [];
+
+                            classes.forEach((classs) => {
+                                let temp_data = {
+                                    content_type: "text",
+                                    title: classs,
+                                    payload: classs
+                                }
+                                data.element.push(temp_data);
+                            });
+
+                            if (data.element.length > 0) {
+                                sendQuickReplies(sender, data)
+                                    .then((msg) => console.log(msg))
+                                    .catch((err) => console.log(err));
+                            } else {
+                                sendMessage(sender, "Sorry you haven't registered any classes")  
                             }
-                            data.element.push(temp_data);
+                        })
+                        .catch((err) => {
+                            console.log(err);
                         });
+                } else if (person == 'cr') {
 
-                        if (data.element.length > 0) {
-                            sendQuickReplies(sender, data)
-                                .then((msg) => console.log(msg))
-                                .catch((err) => console.log(err));
-                        } else {
-                            sendMessage(sender, "Sorry you haven't registered any classes")  
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    })
-
+                }
+                
             })
             .catch((err) => {
                 console.log(err);
@@ -135,6 +140,7 @@ function handleMessage (sender, message) {
     else if (NOTIFY_CLASS_CONTEXT.sender) {
         class_code = NOTIFY_CLASS_CONTEXT.sender;
         handle_notification(sender, message, class_code);
+        delete NOTIFY_CLASS_CONTEXT.sender;
     } 
 
     else if (REGISTER_CONTEXT.sender) {
@@ -226,9 +232,15 @@ function handle_subscription (sender, message) {
 function handle_notification (sender, message, class_code) {
     get_students_of_class(class_code)
         .then((students) => {
-            students.forEach((student) => {
-                sendMessage(student.profileID, message);
-            })
+            if (students.length > 0) {
+                students.forEach((student) => {
+                    sendMessage(student.profileID, message);
+                });
+                sendMessage(sender, 'Your message has been sent');
+            } else {
+                sendMessage(sender, 'Sorry, this class has no students.');
+            }
+
         })
         .catch((err) => {
             console.log(err);

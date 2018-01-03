@@ -1,6 +1,7 @@
 // Database Models
 const TeacherModel = require('../models/teacher');
 const StudentModel = require('../models/student');
+const ClassModel = require('../models/classroom');
 
 const { getUserData } = require('../Modules/apicalls');
 const { validate_class } = require('../Modules/validation');
@@ -96,6 +97,17 @@ function register_class (teacher_id, class_code) {
                 if (err) reject(err)
                 else resolve("New class added!");
             });
+
+            // Save in classroom
+            let new_class = new ClassModel();
+            new_class.code = class_code;
+            new_class.teacher = teacher_id;
+            new_class.save((err) => {
+                if (err)
+                    console.log('Error while adding new classrom')
+                else
+                    console.log('New classRoom Added')
+            })
         });
     })
 }
