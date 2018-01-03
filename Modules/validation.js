@@ -45,7 +45,7 @@ function validate_CR (profile_id) {
 	});
 }
 
-async function validate_teacher_CR (profile_id) {
+function validate_teacher_CR (profile_id) {
 	return new Promise((resolve, reject) => {
 		validate_teacher(profile_id)
 			.then((isTeacher) => {
@@ -64,17 +64,20 @@ async function validate_teacher_CR (profile_id) {
 }
 
 function validate_class (subscription_code) {
-	subscription_code = subscription_code.toUpperCase();
+	return new Promise((resolve, reject) => {
+		subscription_code = subscription_code.toUpperCase();
 
-	get_all_classes()
-		.then((classes) => {
-			if (classes.indexOf(subscription_code)) {
-				resolve(true)
-			} else {
-				reject(false);
-			}
-		})
-		.catch((err) => console.log(err));
+		get_all_classes()
+			.then((classes) => {
+				if (classes.indexOf(subscription_code)) {
+					resolve(true)
+				} else {
+					reject(false);
+				}
+			})
+			.catch((err) => console.log(err));
+	})
+
 }
 
 function get_students_of_class (class_code) {
