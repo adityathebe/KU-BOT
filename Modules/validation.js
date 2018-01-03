@@ -128,7 +128,7 @@ function get_teachers_of_student (student_id) {
 						
 					});
 			})
-			.catch(err => console.log(err);
+			.catch(err => console.log(err));
 
 		TeacherModel.findOne({profileID: teacher_id}, (err, teacher) => {
 			if (err) reject(err);
