@@ -69,7 +69,7 @@ function validate_class (subscription_code) {
 
 		get_all_classes()
 			.then((classes) => {
-				if (classes.indexOf(subscription_code)) {
+				if (classes.indexOf(subscription_code) >= 0) {
 					resolve(true)
 				} else {
 					reject(false);
