@@ -176,55 +176,47 @@ function handleMessage (sender, message) {
 
     else if (message.toUpperCase().trim() == 'KU NEWS') {
 
-    var sendGenericMessage = function(sender, data) {
-        let messageContent = [];
-        for (var i = 0; i < data.length; i++) {
-            messageContent.push({
-                "title": news.title,
-                "subtitle": news.created,
-                "image_url": news.url,
-                "buttons": [
-                    {
-                        "type": "web_url",
-                        "url": data[i].url,
-                        "title": (data[i].btnTitle) ? data[i].btnTitle : 'Read More'
+        var sendGenericMessage = function(sender, data) {
+            let messageContent = [];
+            for (var i = 0; i < data.length; i++) {
+                messageContent.push({
+                    "title": news.title,
+                    "subtitle": news.created,
+                    "image_url": news."https://imgur.com/R5WKv1E",
+                    "buttons": [
+                        {
+                            "type": "web_url",
+                            "url": news.url,
+                            "title": (news.btnTitle) ? news.btnTitle : 'Read More'
+                        }
+                    ],
+                })
+            }
+
+            let messageData = {
+                recipient: {
+                    id: sender,
+                },
+                message: {
+                    "attachment": {
+                        "type": "template",
+                        "payload": {
+                            "template_type": "generic",
+                            "elements": messageContent
+                        }
                     }
-                ],
+                }
+            };
+            
+            return new Promise((resolve, reject) => {
+                callSendApi(messageData).then( (msg) => {
+                    resolve(msg);
+                }, (errMsg) => {
+                    reject(errMsg);
+                });
             })
         }
 
-        let messageData = {
-            recipient: {
-                id: sender,
-            },
-            message: {
-                "attachment": {
-                    "type": "template",
-                    "payload": {
-                        "template_type": "generic",
-                        "elements": messageContent
-                    }
-                }
-            }
-        };
-        
-        return new Promise((resolve, reject) => {
-            callSendApi(messageData).then( (msg) => {
-                resolve(msg);
-            }, (errMsg) => {
-                reject(errMsg);
-            });
-        })
-    }
-        sendQuickReplies(sender, quick_replies_data)
-            .then((msg) => console.log(msg))
-            .catch((err) => console.log(err));
-    }
-
-    else {
-        sendMessage(sender, 'Sorry I did not understand that.');
-    }
-}
 
 function handle_quickReplies (sender, payload) {
     console.log("Quick Reply Payload Received:", payload);
