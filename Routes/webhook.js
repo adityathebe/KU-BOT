@@ -13,6 +13,7 @@ const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
 const { register_class } = require('../Modules/subscribe');
 const { validate_teacher, validate_class, validate_teacher_CR } = require('../Modules/validation');
 const { get_students_of_class, get_classes_of_teacher } = require('../Modules/validation');
+const { news } = require('../utilities/kurss');
 
 // Utility Variables
 let SUB_CONTEXT = {};
@@ -176,46 +177,11 @@ function handleMessage (sender, message) {
 
     else if (message.toUpperCase().trim() == 'KU NEWS') {
 
-        var sendGenericMessage = function(sender, data) {
-            let messageContent = [];
-            for (var i = 0; i < data.length; i++) {
-                messageContent.push({
-                    "title": news.title,
-                    "subtitle": news.created,
-                    "image_url": news."https://imgur.com/R5WKv1E",
-                    "buttons": [
-                        {
-                            "type": "web_url",
-                            "url": news.url,
-                            "title": (news.btnTitle) ? news.btnTitle : 'Read More'
-                        }
-                    ],
-                })
-            }
-
-            let messageData = {
-                recipient: {
-                    id: sender,
-                },
-                message: {
-                    "attachment": {
-                        "type": "template",
-                        "payload": {
-                            "template_type": "generic",
-                            "elements": messageContent
-                        }
-                    }
-                }
-            };
-            
-            return new Promise((resolve, reject) => {
-                callSendApi(messageData).then( (msg) => {
-                    resolve(msg);
-                }, (errMsg) => {
-                    reject(errMsg);
-                });
+        getKUNews()
+            .then((news) => {
+                sendGenericMessage(sender, news);
             })
-        }
+    }
 
 
 function handle_quickReplies (sender, payload) {

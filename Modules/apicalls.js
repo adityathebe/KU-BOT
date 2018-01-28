@@ -21,6 +21,48 @@ var sendMessage = function(sender, messageText) {
     })
 }
 
+// Functions for GenericMessage 
+var sendGenericMessage = function(sender, data) {
+    let messageContent = [];
+    for (var i = 0; i < data.length; i++) {
+        messageContent.push({
+            "title": news.title,
+            "subtitle": news.created,
+            "image_url": news.img_url,
+            "buttons": [
+                {
+                    "type": "web_url",
+                    "url": news.url,
+                    "title": (news.btnTitle) ? news.btnTitle : 'Read More'
+                }
+            ],
+        })
+    }
+
+    let messageData = {
+        recipient: {
+            id: sender,
+        },
+        message: {
+            "attachment": {
+                "type": "template",
+                "payload": {
+                    "template_type": "generic",
+                    "elements": messageContent
+                }
+            }
+        }
+    };
+    
+    return new Promise((resolve, reject) => {
+        callSendApi(messageData).then( (msg) => {
+            resolve(msg);
+        }, (errMsg) => {
+            reject(errMsg);
+        });
+    })
+}
+
 const sendQuickReplies = (sender, data) => {
     let messageData =   {
         recipient: {
@@ -71,6 +113,7 @@ function getUserData(id, callback) {
 
 module.exports =  {
     sendMessage,
+    sendGenericMessage,
     sendQuickReplies,
     getUserData
 };
