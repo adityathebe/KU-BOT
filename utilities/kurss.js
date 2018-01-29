@@ -22,11 +22,11 @@ const getKUNews = () => {
                     title: news.title,
                     subtitle: news.created,
                     url: news.url,
-                    img_url: "http://i.imgur.com/RPUDbs3.jpg"
+                    img_url: "https://i.imgur.com/RPUDbs3.jpg"
                 })
             });
 
-            resolve(body);            
+            resolve(payload);            
             
         });
     });
