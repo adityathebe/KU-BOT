@@ -179,8 +179,9 @@ function handleMessage (sender, message) {
 
         getKUNews()
             .then((news) => {
-                sendGenericMessage(sender, news);
+                return sendGenericMessage(sender, news);
             })
+            .then((msg) => console.log(msg))
             .catch(err => console.log(err))
     }
 

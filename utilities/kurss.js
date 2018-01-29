@@ -8,14 +8,6 @@ const getKUNews = () => {
         Feed.load(url, (error, rss) => {
             if (error) 
                 reject("Couldn't connect to the server.\nPlease try again later");
-
-            /* {
-                title,
-                description,
-                url,
-                created
-            } */
-                
             
             let body = rss.items.map((res) => {
                 let date = new Date(res.created);
@@ -42,11 +34,4 @@ const getKUNews = () => {
 
 module.exports = {
     getKUNews
-}
-
-if (require.main == module) {
-    getKUNews()
-    .then((data) => {
-        console.log(JSON.stringify(data, null, 4));
-    })
 }
