@@ -1,3 +1,5 @@
+const Feed = require('rss-to-json');
+
 const getKUNews = () => {
 
     return new Promise((resolve, reject) => {
@@ -6,14 +8,6 @@ const getKUNews = () => {
         Feed.load(url, (error, rss) => {
             if (error) 
                 reject("Couldn't connect to the server.\nPlease try again later");
-
-            // Ya samma news aayo
-            // Aba news ko data lai modify garne halka
-
-            // news aauda chei esto hunchha
-            // [{}, {}, {}, {}]
-            // News object haru ko array
-
 
             let body = rss.items.map((res) => {
                 let date = new Date(res.created);

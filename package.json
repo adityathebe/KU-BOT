@@ -21,7 +21,8 @@
         "body-parser": "^1.18.2",
         "express": "^4.16.2",
         "mongoose": "^4.13.6",
-        "request": "^2.83.0"
+        "request": "^2.83.0",
+        "rss-to-json": "^1.0.3"
     },
     "devDependencies": {
         "dotenv": "^4.0.0"
