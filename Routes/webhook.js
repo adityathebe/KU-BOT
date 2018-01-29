@@ -6,14 +6,14 @@ const vtoken = process.env.VTOKEN;
 const botID = '1997955997090908'
 
 // Graph API Functions
-const {sendMessage, sendQuickReplies, getUserData} = require('../Modules/apicalls');
+const {sendMessage, sendQuickReplies, sendGenericMessage, getUserData} = require('../Modules/apicalls');
 
 // Utility Functions
 const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
 const { register_class } = require('../Modules/subscribe');
 const { validate_teacher, validate_class, validate_teacher_CR } = require('../Modules/validation');
 const { get_students_of_class, get_classes_of_teacher } = require('../Modules/validation');
-const { news } = require('../utilities/kurss');
+const { getKUNews } = require('../utilities/kurss');
 
 // Utility Variables
 let SUB_CONTEXT = {};
@@ -181,7 +181,10 @@ function handleMessage (sender, message) {
             .then((news) => {
                 sendGenericMessage(sender, news);
             })
+            .catch(err => console.log(err))
     }
+
+}
 
 
 function handle_quickReplies (sender, payload) {

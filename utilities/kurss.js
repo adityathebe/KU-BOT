@@ -40,5 +40,5 @@ const getKUNews = () => {
 }
 
 module.exports = {
-    news
+    getKUNews
 }
