@@ -9,14 +9,20 @@ const getKUNews = () => {
             if (error) 
                 reject("Couldn't connect to the server.\nPlease try again later");
 
+            /* {
+                title,
+                description,
+                url,
+                created
+            } */
+                
+            
             let body = rss.items.map((res) => {
                 let date = new Date(res.created);
                 res.created = date.toString("MMM dd").substring(0, 15);
-                delete res.link;
                 return res;
             }).splice(0, 4);
 
-            // Ya dekhi chei generic message ko lagi milaune
 
             let payload = [];
             body.forEach((news) => {
@@ -27,12 +33,20 @@ const getKUNews = () => {
                     img_url: "https://imgur.com/R5WKv1E"
                 })
             });
+
+            resolve(body);            
             
-            resolve(body)
         });
     });
 }
 
 module.exports = {
     getKUNews
+}
+
+if (require.main == module) {
+    getKUNews()
+    .then((data) => {
+        console.log(JSON.stringify(data, null, 4));
+    })
 }

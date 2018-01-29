@@ -26,14 +26,14 @@ var sendGenericMessage = function(sender, data) {
     let messageContent = [];
     for (var i = 0; i < data.length; i++) {
         messageContent.push({
-            "title": news.title,
-            "subtitle": news.created,
-            "image_url": news.img_url,
+            "title": data[i].title,
+            "subtitle": data[i].created,
+            "image_url": data[i].img_url,
             "buttons": [
                 {
                     "type": "web_url",
-                    "url": news.url,
-                    "title": (news.btnTitle) ? news.btnTitle : 'Read More'
+                    "url": data[i].url,
+                    "title": (data[i].btnTitle) ? data[i].btnTitle : 'Read More'
                 }
             ],
         })
