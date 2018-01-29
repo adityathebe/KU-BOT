@@ -90,7 +90,7 @@ function handlePostback (sender, payload) {
         validate_teacher_CR(sender)
             .then((person) => {
 
-                if (person == 'Teacher') {
+                if (person == 'teacher') {
                     get_classes_of_teacher(sender)
                         .then((classes) => {
 
