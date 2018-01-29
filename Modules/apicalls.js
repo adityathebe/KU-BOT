@@ -95,7 +95,7 @@ const callSendApi = (messageData, callback) => {
             if (!error && response.statusCode == 200) {
                 var recipientId = body.recipient_id;
                 if (body.message_id)
-                    resolve("Message send to : " + recipientId);
+                    resolve("Message sent to : " + recipientId);
             } else {
                 reject(`Failed calling Send API ${response.statusCode} ${response.statusMessage} ${body.error}`);
             }
