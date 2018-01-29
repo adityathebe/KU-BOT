@@ -22,7 +22,7 @@ const getKUNews = () => {
                     title: news.title,
                     subtitle: news.created,
                     url: news.url,
-                    img_url: "http://i.imgur.com/R5WKv1E.jpg"
+                    img_url: "http://i.imgur.com/RPUDbs3.jpg"
                 })
             });
 
