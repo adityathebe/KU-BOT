@@ -1,5 +1,5 @@
 const request = require('request');
-const fb_token = process.env.FB_TOKEN;
+const fb_token = "EAAD7x11SrrgBAMb020qe78oWRfWmOzfoRCiNMsy6fDGvevPJeaVG4TzuREyHzxAjXUjZByYggrM0TundExr4cS3SmBJOGZBI2LQZCmu4LhSOZA2xvGUGGz1KAZBJZAEFNaCINv9c5k4uhnLzkI3FpiiIrh2SNZB7LlvuxIDusWGRByXAdiy9h9c";
 
 // Functions to send message
 var sendMessage = function(sender, messageText) {

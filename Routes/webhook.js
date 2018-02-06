@@ -2,17 +2,16 @@ const fs = require ('fs');
 const express = require('express');
 
 // Facebook Tokens
-const vtoken = process.env.VTOKEN;
+const vtoken = 'helloworld';
 const botID = '1997955997090908'
 
 // Graph API Functions
 const {sendMessage, sendQuickReplies, sendGenericMessage, getUserData} = require('../Modules/apicalls');
 
 // Utility Functions
-const { subscribeStudent, registerTeacher } = require('../Modules/subscribe');
-const { register_class } = require('../Modules/subscribe');
-const { validate_teacher, validate_class, validate_teacher_CR } = require('../Modules/validation');
-const { get_students_of_class, get_classes_of_teacher } = require('../Modules/validation');
+const { addNewStudent, addNewTeacher, addNewClass } = require('../database/subscribe');
+const { validate_teacher, validate_cr, validate_class, validate_teacher_cr } = require('../database/validation');
+const { get_students_of_class, get_classes_of_teacher } = require('../database/utils');
 const { getKUNews } = require('../utilities/kurss');
 
 // Utility Variables
@@ -21,10 +20,6 @@ let NOTIFY_CONTEXT = {};
 let REGISTER_CONTEXT = {};
 let NOTIFY_CLASS_CONTEXT = {};
 let CLASS_ADDITION_CONTEXT = {};
-
-// Database Models
-const TeacherModel = require('../models/teacher');
-const StudentModel = require('../models/student');
 
 let router = express.Router();
 
@@ -87,9 +82,8 @@ function handlePostback (sender, payload) {
     }
 
     if ( payload == 'PAYLOAD_NOTIFY') {
-        validate_teacher_CR(sender)
+        validate_teacher_cr(sender)
             .then((person) => {
-
                 if (person == 'teacher') {
                     get_classes_of_teacher(sender)
                         .then((classes) => {
@@ -120,13 +114,14 @@ function handlePostback (sender, payload) {
                             console.log(err);
                         });
                 } else if (person == 'cr') {
-
-                }
-                
+                    sendMessage(sender, "Sorry this feature isn't available yet")  ;
+                } else {
+                    sendMessage(sender, "You're not authorized to send notifications")
+                }          
             })
             .catch((err) => {
                 console.log(err);
-                sendMessage(sender, "You're not authorized to send notifications")
+                sendMessage(sender, "Sorry some error occurred")
             });
     }
 }
@@ -149,7 +144,7 @@ function handleMessage (sender, message) {
     }
 
     else if (CLASS_ADDITION_CONTEXT.sender) {
-        register_class(sender, message)
+        addNewClass(sender, message)
             .then((msg) => {
                 sendMessage(sender, msg);
                 delete CLASS_ADDITION_CONTEXT.sender;
@@ -225,16 +220,20 @@ async function handle_registeration (sender, message) {
 function handle_subscription (sender, message) {
     validate_class(message)
         .then((msg) => {
-            subscribeStudent(sender, message)
+            if (msg) {
+                addNewStudent(sender, message)
                 .then((msg) => {
                     sendMessage(sender, msg)
                     delete SUB_CONTEXT.sender;
                 })
                 .catch((err) => sendMessage(sender, err));
-
+            } else {
+                sendMessage(sender, 'Invalid class code...');
+            }
         })
         .catch((err) => {
-            sendMessage(sender, 'Invalid class code...');
+            console.log(err);
+            sendMessage(sender, 'There was some error while subscribing.');
         });
 }
 
@@ -253,8 +252,7 @@ function handle_notification (sender, message, class_code) {
         })
         .catch((err) => {
             console.log(err);
-        })
-    
+        })    
 }
 
 function validateCode (message) {
