@@ -1,24 +1,37 @@
 const express = require('express');
 const request = require('request');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
+const mysql = require('mysql');
 
 const PORT = process.env.PORT || 5000;
-
-//connect to mongodb database
-mongoose.connect("mongodb://admin:password@ds021016.mlab.com:21016/kubot" , {useMongoClient: true});
-
-mongoose.Promise = global.Promise;
-let db = mongoose.connection;
-    db.on('error',(err) => {
-        console.log(err);
-    })
-    .once('open',() => {
-        console.log('connected to database');
-    })
-
 const app = express();
 app.use(bodyParser.json());
+
+//connect to SQL database
+let connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'aditya',
+    password: 'password',
+    database: 'kubot'
+});
+
+connection.connect(function (err) {
+    if (err) {
+        return console.error('error connecting: ' + err.stack);
+    }
+    console.log("Connected to database");
+});
+
+if (process.argv[2] === '--init') {
+    console.log('Initializing Tables');
+    const { createStudentsTable, createTeachersTable, createClassTable } = require('./database/init');
+    Promise.all([createStudentsTable(connection), createTeachersTable(connection)])
+        .then((msg) => {
+            return createClassTable(connection);
+        })
+        .then(msg => console.log(msg))
+        .catch(err => console.log(err));
+}
 
 let webhookRoute = require('./Routes/webhook');
 app.use('/webhook', webhookRoute);
