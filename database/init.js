@@ -1,37 +1,18 @@
-const createStudentsTable = (connection) => {
-    return new Promise((resolve, reject) => {
-        let q = "CREATE TABLE students (profile_id varchar(100), name varchar(255), cr char, primary key(profile_id) );";
-        connection.query(q, (error, results, fields) => {
-            if (error) reject(error);
-            else resolve(results, fields);
-        });
-    })
-}
+const mysql = require('mysql');
 
-const createTeachersTable = (connection) => {
-    return new Promise((resolve, reject) => {
-        let q = "CREATE TABLE teachers (profile_id varchar(100), name varchar(255), primary key(profile_id) );";
-        connection.query(q, (error, results, fields) => {
-            if (error) reject(error.message);
-            else resolve(results, fields);
-        });
-    })
-}
+//connect to SQL database
+let connection = mysql.createConnection({
+    host: '0.0.0.0',
+    user: 'aftab03',
+    password: '',
+    database: 'kubot'
+});
 
-const createClassTable = (connection) => {
-    return new Promise((resolve, reject) => {
-        let q = "CREATE TABLE classrooms ( code varchar(100), teacher_id varchar(100), "
-        q += "foreign key (teacher_id) references teachers (profile_id)";
-        q += "on delete cascade on update cascade);"
-        connection.query(q, (error, results, fields) => {
-            if (error) reject(error);
-            else resolve(results, fields);
-        });
-    })
-}
+connection.connect(function (err) {
+    if (err) {
+        return console.error('error connecting: ' + err.stack);
+    }
+    console.log("Connected to database");
+});
 
-module.exports = {
-    createStudentsTable,
-    createTeachersTable,
-    createClassTable
-}
+module.exports = connection;

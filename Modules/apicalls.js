@@ -103,12 +103,15 @@ const callSendApi = (messageData, callback) => {
     })
 }
 
-function getUserData(id, callback) {
-    let url = `https://graph.facebook.com/v2.11/${id}?access_token=${fb_token}`
-    request({url, json:true}, (error, res, body) => {
-        let name = `${body.first_name} ${body.last_name}`
-        callback(name);
-    });
+function getUserData( id ) {
+    return new Promise((resolve, reject) => {
+        let url = `https://graph.facebook.com/v2.11/${id}?access_token=${fb_token}`
+        request({url, json:true}, (error, res, body) => {
+            if (error) reject(error);
+            let name = `${body.first_name} ${body.last_name}`
+            resolve(name);
+        });
+    })    
 }
 
 module.exports =  {

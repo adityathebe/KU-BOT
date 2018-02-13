@@ -1,7 +1,9 @@
-const addNewStudent = (connection, student) => {
+const connection = require('./init');
+
+const addNewStudent = (student) => {
     return new Promise((resolve, reject) => {
-        let q = "INSERT INTO students (profile_id, name, cd) VALUES";
-            q += `(${student.id}, ${student.name}, ${student.cr})`;
+        let q = "INSERT INTO students (profile_id, name, cr) VALUES";
+        q += `('${student.id}', '${student.name}', '${student.cr}')`;
         connection.query(q, (error, results, fields) => {
             if (error) reject(error);
             else resolve(results, fields);
@@ -9,9 +11,9 @@ const addNewStudent = (connection, student) => {
     })
 }
 
-const addNewTeacher = (connection, teacher) => {
+const addNewTeacher = (teacher) => {
     return new Promise((resolve, reject) => {
-        let q = "CREATE TABLE teacheres (profile_id varchar(100), name varchar(255)";
+        let q = `INSERT INTO teachers (profile_id, name) VALUES ('${teacher.id}', '${teacher.name}');`
         connection.query(q, (error, results, fields) => {
             if (error) reject(error);
             else resolve(results, fields);
@@ -19,14 +21,22 @@ const addNewTeacher = (connection, teacher) => {
     })
 }
 
-const addNewClass = (connection, classroom) => {
+const addNewClass = (classroom, teacher_id) => {
     return new Promise((resolve, reject) => {
-        let q = "CREATE TABLE classrooms (id int auto_increment, code varchar(100), teacher_id varchar(255) "
-            q += "foreign key (teacher_id) references teachers (profile_id)";
-            q += "on delete cascase on update cascade"
+        let q = `INSERT INTO classrooms (code, teacher_id) VALUES ('${classroom}', '${teacher_id}') `;
         connection.query(q, (error, results, fields) => {
             if (error) reject(error);
-            else resolve(results, fields);
+            else resolve(results);
+        });
+    })
+}
+
+const addToClassroom = (classroom, student_id) => {
+    return new Promise((resolve, reject) => {
+        let q = `INSERT INTO class_student (class_code, student_id) VALUES ('${classroom}', '${student_id}') `;
+        connection.query(q, (error, results, fields) => {
+            if (error) reject(error);
+            else resolve(results);
         });
     })
 }
@@ -34,5 +44,6 @@ const addNewClass = (connection, classroom) => {
 module.exports = {
     addNewStudent,
     addNewTeacher,
-    addNewClass
+    addNewClass,
+    addToClassroom
 }
