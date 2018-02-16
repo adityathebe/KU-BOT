@@ -47,6 +47,12 @@ const get_teachers_of_class = (class_code) => {
     });
 };
 
+const getNewsRegisteredUser = () => {
+    return new Promise((resolve, reject) => {
+        let q = `SELECT * from students`
+    })
+}
+
 module.exports = {
     get_classes_of_teacher,
     get_students_of_class,

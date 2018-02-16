@@ -2,7 +2,7 @@ const request = require('request');
 const fb_token = "EAAD7x11SrrgBAMb020qe78oWRfWmOzfoRCiNMsy6fDGvevPJeaVG4TzuREyHzxAjXUjZByYggrM0TundExr4cS3SmBJOGZBI2LQZCmu4LhSOZA2xvGUGGz1KAZBJZAEFNaCINv9c5k4uhnLzkI3FpiiIrh2SNZB7LlvuxIDusWGRByXAdiy9h9c";
 
 // Functions to send message
-var sendMessage = function(sender, messageText) {
+var sendMessage = (sender, messageText) => {
     let messageData = {
         recipient: {
             id: sender,
@@ -13,16 +13,41 @@ var sendMessage = function(sender, messageText) {
     }
 
     return new Promise((resolve, reject) => {
-        callSendApi(messageData).then( (msg) => {
+        callSendApi(messageData).then((msg) => {
             resolve('Successfully sent Text Message');
         }, (errMsg) => {
             reject(errMsg);
         });
-    })
+    });
+}
+
+const sendAttachment = (sender, attch_type, attch_payload) => {
+    let messageData = {
+        recipient: {
+            id: sender,
+        },
+        message: {
+            attachment: {
+                type: attch_type,
+                payload: {
+                    url: attch_payload,
+                    is_reusable: true
+                }
+            }
+        }
+    }
+
+    return new Promise((resolve, reject) => {
+        callSendApi(messageData).then((msg) => {
+            resolve('Successfully sent Text Message');
+        }, (errMsg) => {
+            reject(errMsg);
+        });
+    });
 }
 
 // Functions for GenericMessage 
-var sendGenericMessage = function(sender, data) {
+var sendGenericMessage = function (sender, data) {
     let messageContent = [];
     for (var i = 0; i < data.length; i++) {
         messageContent.push({
@@ -53,9 +78,9 @@ var sendGenericMessage = function(sender, data) {
             }
         }
     };
-    
+
     return new Promise((resolve, reject) => {
-        callSendApi(messageData).then( (msg) => {
+        callSendApi(messageData).then((msg) => {
             resolve(msg);
         }, (errMsg) => {
             reject(errMsg);
@@ -64,17 +89,17 @@ var sendGenericMessage = function(sender, data) {
 }
 
 const sendQuickReplies = (sender, data) => {
-    let messageData =   {
+    let messageData = {
         recipient: {
             id: sender
         },
-        message : {
+        message: {
             text: data.text,
             "quick_replies": data.element,
         }
     }
     return new Promise((resolve, reject) => {
-        callSendApi(messageData).then( (msg) => {
+        callSendApi(messageData).then((msg) => {
             resolve(msg);
         }, (errMsg) => {
             reject(errMsg);
@@ -83,15 +108,15 @@ const sendQuickReplies = (sender, data) => {
 }
 
 const callSendApi = (messageData, callback) => {
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         request({
             uri: 'https://graph.facebook.com/v2.6/me/messages',
-            qs: { 
-                access_token: fb_token 
+            qs: {
+                access_token: fb_token
             },
             method: 'POST',
             json: messageData
-        }, (error, response, body)=> {
+        }, (error, response, body) => {
             if (!error && response.statusCode == 200) {
                 var recipientId = body.recipient_id;
                 if (body.message_id)
@@ -99,23 +124,24 @@ const callSendApi = (messageData, callback) => {
             } else {
                 reject(`Failed calling Send API ${response.statusCode} ${response.statusMessage} ${body.error}`);
             }
-        });  
+        });
     })
 }
 
-function getUserData( id ) {
+function getUserData(id) {
     return new Promise((resolve, reject) => {
         let url = `https://graph.facebook.com/v2.11/${id}?access_token=${fb_token}`
-        request({url, json:true}, (error, res, body) => {
+        request({ url, json: true }, (error, res, body) => {
             if (error) reject(error);
             let name = `${body.first_name} ${body.last_name}`
             resolve(name);
         });
-    })    
+    })
 }
 
-module.exports =  {
+module.exports = {
     sendMessage,
+    sendAttachment,
     sendGenericMessage,
     sendQuickReplies,
     getUserData

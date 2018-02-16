@@ -6,7 +6,7 @@ const vtoken = 'helloworld';
 const botID = '1997955997090908'
 
 // Graph API Functions
-const { sendMessage, sendQuickReplies, sendGenericMessage, getUserData } = require('../Modules/apicalls');
+const { sendMessage, sendAttachment, sendQuickReplies, sendGenericMessage, getUserData } = require('../Modules/apicalls');
 
 // Utility Functions
 const { addNewStudent, addNewTeacher, addNewClass, addToClassroom } = require('../database/subscribe');
@@ -50,7 +50,6 @@ router.post('/', (req, res) => {
         // Ignore delivery reports
         if (!messageEvent.delivery && sender != botID) {
 
-            // Check for Postbacks
             if (messageEvent.postback) {
                 let payload = messageEvent.postback.payload;
                 handlePostback(sender, payload)
@@ -61,9 +60,18 @@ router.post('/', (req, res) => {
                 handle_quickReplies(sender, payload);
             }
 
-            else if (messageEvent.message) {
+            else if (messageEvent.message.text) {
                 let message = messageEvent.message.text;
                 handleMessage(sender, message);
+            }
+
+            else if (messageEvent.message.attachments) {
+                let attachments = messageEvent.message.attachments;
+                attachments.forEach((attachment) => {
+                    let type = attachment.type;
+                    let payload = attachment.payload.url;
+                    sendAttachment(sender, type, payload);
+                });
             }
         }
     }
@@ -88,7 +96,7 @@ function handlePostback(sender, payload) {
                     sendMessage(sender, 'Sorry you are not a teacher!');
                 }
             })
-            .catch(err => console.log(err));        
+            .catch(err => console.log(err));
     }
 
     else if (payload == 'REGISTER_TEACHER') {
@@ -232,8 +240,12 @@ function handleMessage(sender, message) {
                 delete CLASS_ADDITION_CONTEXT[sender];
             })
             .catch((err) => {
-                console.log(err);
-                sendMessage(sender, 'Sorry We had an error');
+                if (err.code == 'ER_DUP_ENTRY') {
+                    sendMessage(sender, 'Sorry this class code has already been taken !')
+                } else {
+                    sendMessage(sender, 'Sorry We had an error');
+                }
+                delete CLASS_ADDITION_CONTEXT[sender];
             })
     }
 
@@ -258,7 +270,7 @@ function handleMessage(sender, message) {
 function handle_quickReplies(sender, payload) {
     console.log("Quick Reply Payload Received:", payload);
 
-    if (payload.search('_student') > 0 ) {
+    if (payload.search('_student') > 0) {
         NOTIFY_TEACHER_CONTEXT[sender] = payload.replace('_student', '');
         sendMessage(sender, 'Enter your message');
         delete CR_NOTIFY_CONTEXT[sender];
@@ -338,7 +350,7 @@ function handle_notification(sender, message, class_code) {
         })
 }
 
-function handleCRNotification (sender, message, class_code) {
+function handleCRNotification(sender, message, class_code) {
     get_teachers_of_class(class_code)
         .then((teachers) => {
             if (teachers.length > 0) {
@@ -355,10 +367,6 @@ function handleCRNotification (sender, message, class_code) {
         .catch((err) => {
             console.log(err);
         })
-}
-
-function validateCode(message) {
-    return true;
 }
 
 module.exports = router
